@@ -57,13 +57,17 @@ function App() {
   );
 }
 
-function Pizza(props) {
+function Pizza({ pizzaObj }) {
+  // if (pizzaObj.soldOut) return null;
+
   return (
-    <li className="pizza pizzas">
-      <img src={props.photoName} alt={props.pizzaName} />
-      <h3>{props.pizzaName}</h3>
-      <p>{props.ingredients}</p>
-      <span>{props.price}</span>
+    <li className={`pizza ${pizzaObj.soldOut ? "sold-out" : ""}`}>
+      <img src={pizzaObj.photoName} alt={pizzaObj.name} />
+      <div>
+        <h3>{pizzaObj.name}</h3>
+        <p>{pizzaObj.ingredients}</p>
+        <span>{pizzaObj.soldOut ? "SOLD OUT" : pizzaObj.price}</span>
+      </div>
     </li>
   );
 }
@@ -78,20 +82,27 @@ function Header() {
 }
 
 function Menu() {
+  const pizzas = pizzaData;
+
   return (
     <main className="menu">
       <h2>Our Menus</h2>
-      <ul>
-        {pizzaData.map((pizza) => (
-          <Pizza
-            pizzaName={pizza.name}
-            ingredients={pizza.ingredients}
-            photoName={pizza.photoName}
-            price={pizza.price}
-            key={pizza.name}
-          />
-        ))}
-      </ul>
+
+      {pizzas.length > 0 ? (
+        <React.Fragment>
+          <p>
+            Authentic Italian cuisine. 6 creative dishes to choose from. All
+            from our stone oven, all organic, all delicious.
+          </p>
+          <ul className="pizzas">
+            {pizzaData.map((pizza) => (
+              <Pizza pizzaObj={pizza} key={pizza.name} />
+            ))}
+          </ul>
+        </React.Fragment>
+      ) : (
+        <p>We are still working on our menu!</p>
+      )}
     </main>
   );
 }
@@ -99,8 +110,25 @@ function Menu() {
 function Footer() {
   const hour = new Date().getHours();
   console.log(hour);
-  // const openHour = 12;
-  // const closeHour = 22;
+  const openHour = 1;
+  const closeHour = 22;
+  const isOpen = hour <= closeHour && hour >= openHour;
+
+  return (
+    <footer className="footer">
+      {isOpen ? (
+        <div className="order">
+          <p>We are open till {closeHour}:00, Please come or order online</p>
+          <button className="btn">Order</button>
+        </div>
+      ) : (
+        <p>
+          Sorry we are closed right now. You may visit tomorrow after {openHour}
+          :00
+        </p>
+      )}
+    </footer>
+  );
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
